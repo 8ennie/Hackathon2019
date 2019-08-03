@@ -1,0 +1,135 @@
+{% extends "Layout.html" %}
+{% block content %}
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/register.css') }}">
+    <div id="messageList" class="messages">
+    </div>
+    <div style="width: 100%; text-align: center;">
+        <div id="answer" class="answerContainer"></div>
+    </div>
+
+
+    <script>
+        $(document).ready(function () {
+            addBotMessage("Welcome back Bob. What can I help you with Today?");
+            let options = ["Offer a Service", "Use a Service", "Browse all Services"];
+            answerOptions(options);
+        });
+
+
+        function choosePath() {
+            alert();
+        }
+
+
+        function addBotMessage(messageText) {
+            let messageDiv = document.createElement("div");
+            messageDiv.className = "messageContainer1";
+            let logo = document.createElement("img");
+            logo.src = "{{ url_for('static', filename='pictures/' + 'Logo.png') }}";
+            logo.className = "chatLogo";
+            messageDiv.append(logo);
+            messageDiv.style.textAlign = 'left';
+            let message = document.createElement("div");
+            message.className = "messageContainer2";
+            message.innerHTML = messageText;
+            messageDiv.append(message);
+            $(document.getElementById('messageList')).append(messageDiv);
+
+        }
+
+        function addUserMessage(messageText) {
+            let message = document.createElement("div");
+            message.className = "messageContainer1";
+            message.innerHTML = "<div class=\"messageContainer2\"><div class='message'>" + messageText + "</div></div>";
+            message.style.textAlign = "right";
+            $(document.getElementById('messageList')).append(message);
+
+        }
+
+        function answerOptions(options) {
+            return options.forEach(addOption);
+        }
+
+        function addOption(option) {
+            let optionButton = document.createElement('button');
+            optionButton.addEventListener('click', function () {
+                switch (option) {
+                    case "Offer a Service":
+                        addUserMessage("I would like to offer a Service to my fellow South Africans.");
+                        offerAService();
+                        break;
+                    case "Use a Service":
+                        addUserMessage("I would like to use a Service provided by my fellow South Africans.");
+                        useAService();
+                        break;
+                }
+
+
+            });
+            optionButton.className = "optionButton";
+            optionButton.innerHTML = option;
+            $(document.getElementById('answer')).append(optionButton);
+
+        }
+
+        function answerText(placeholder) {
+            let submit = document.createElement('button');
+            submit.className = "submitButton";
+            submit.innerHTML = "Submit";
+            let textBox = document.createElement('input');
+            textBox.className = "answerTextBox";
+            textBox.placeholder = placeholder;
+            $(document.getElementById('answer')).append(textBox);
+            $(document.getElementById('answer')).append(submit);
+        }
+
+        function answerChoicebox(placeholder, options, myfunc) {
+            $(document.getElementById('answer')).empty();
+            let submit = document.createElement('button');
+            submit.className = "submitButton";
+            submit.innerHTML = "Submit";
+            submit.addEventListener("click", myfunc)
+            let selectBox = document.createElement('select');
+            selectBox.className = "answerChoiceBox";
+            selectBox.id = "selectBox";
+            selectBox.placeholder = placeholder;
+            options.forEach(function (item) {
+                let optionDiv = document.createElement("option");
+                optionDiv.value = item;
+                optionDiv.innerHTML = item;
+                selectBox.append(optionDiv);
+            });
+            $(document.getElementById('answer')).append(selectBox);
+            $(document.getElementById('answer')).append(submit);
+            $('#selectBox').selectize();
+        }
+
+        function sleep(milliseconds) {
+            var start = new Date().getTime();
+            for (var i = 0; i < 1e7; i++) {
+                if ((new Date().getTime() - start) > milliseconds) {
+                    break;
+                }
+            }
+        }
+
+        function offerAService() {
+            addBotMessage("Very Cool 😎, What Service do you have to offer?");
+        }
+
+        function useAService() {
+            addBotMessage("Ok you came to the right place. Lets see if we can find the perfect service for you. <br>" +
+                " So just a few Questions. <br> What type of Job do you need to be done?");
+            answerChoicebox('Category of Service', ['Painting Services', 'Caiterering Services', 'Cleaning Services'], function () {
+                let category = $('#selectBox').val();
+                addUserMessage("For my Job I need someone in the " + category + " bussines.");
+                addBotMessage("Ok that sound really Nice. In what Area do you require your Service?");
+                answerChoicebox('Area', ['Stellenbosch', 'Cape Town', 'Summersite West'], function () {
+
+
+                })
+            });
+        }
+
+    </script>
+{% endblock content %}
